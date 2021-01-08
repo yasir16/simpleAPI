@@ -73,3 +73,68 @@ func (idb *InDB) CreateUser(c *gin.Context) {
 	}
 
 }
+
+func (idb *InDB) UpdateUser(c *gin.Context) {
+	var updateUser structs.User
+	errParam := c.Bind(&updateUser)
+	if errParam != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  http.StatusBadRequest,
+			"message": "can't bind struct",
+		})
+	}
+	id := c.Param("id")
+	var (
+		user    structs.User
+		newUser structs.User
+		result  gin.H
+	)
+	err := idb.DB.First(&user, id).Error
+	if err != nil {
+		result = gin.H{
+			"result": "data not found",
+		}
+	}
+	newUser.FullName = updateUser.FullName
+	newUser.Username = updateUser.Username
+	newUser.Phone = updateUser.Phone
+	newUser.Address = updateUser.Address
+	err = idb.DB.Model(&user).Updates(newUser).Error
+	if err != nil {
+		result = gin.H{
+			"result": "update failed",
+		}
+	} else {
+		result = gin.H{
+			"data":   newUser,
+			"result": "successfully updated data",
+		}
+	}
+	c.JSON(http.StatusOK, result)
+}
+
+func (idb *InDB) DeleteUser(c *gin.Context) {
+	var (
+		user   structs.User
+		result gin.H
+	)
+	id := c.Param("id")
+	err := idb.DB.First(&user, id).Error
+	if err != nil {
+		result = gin.H{
+			"result": "data not found",
+		}
+	}
+	err = idb.DB.Delete(&user).Error
+	if err != nil {
+		result = gin.H{
+			"result": "delete failed",
+		}
+	} else {
+		result = gin.H{
+			"result": "Data deleted successfully",
+		}
+	}
+
+	c.JSON(http.StatusOK, result)
+}
