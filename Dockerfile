@@ -5,11 +5,11 @@ WORKDIR /build
 
 COPY go.mod .
 COPY go.sum .
-RUM go mod download
+RUN go mod download
 
 COPY . . 
 
-RUM go build -o main .
+RUN go build -o main .
 
 
 WORKDIR /dist
