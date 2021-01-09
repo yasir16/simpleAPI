@@ -1,47 +1,39 @@
-package main_test
+package main
 
 import (
-	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/gorilla/mux"
 )
 
-func Router() *mux.Router {
-	router := mux.NewRouter()
-	router.HandleFunc("/user").Methods("GET")
-	return router
-}
 func TestGetUser(t *testing.T) {
-	// server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-	// 	// Test request parameters
-	// 	equals(t, req.URL.String(), "/some/path")
-	// 	// Send response to be tested
-	// 	rw.Write([]byte(`OK`))
-	// }))
+	ts := httptest.NewServer(setupServer())
 
-	// user := &structs.User{}
-	// jsonPerson, _ := json.Marshal(user)
-	// request, _ := http.NewRequest("POST", "/create", bytes.NewBuffer(jsonPerson))
-	// response := httptest.NewRecorder()
+	defer ts.Close()
 
-	req, _ := http.NewRequest("GET", "/product/11", nil)
-	response := executeRequest(req)
+	client := &http.Client{}
+	req, _ := http.NewRequest("GET", fmt.Sprintf("%s/users", ts.URL), nil)
+	req.Header.Add("Authorization", "initestyasir")
+	resp, err := client.Do(req)
 
-	checkResponseCode(t, http.StatusNotFound, response.Code)
-
-	var m map[string]string
-	json.Unmarshal(response.Body.Bytes(), &m)
-	if m["error"] != "Product not found" {
-		t.Errorf("Expected the 'error' key of the response to be set to 'Product not found'. Got '%s'", m["error"])
+	if err != nil {
+		t.Fatalf("Expected no error, got %v", err)
 	}
-}
 
-func executeRequest(req *http.Request) *httptest.ResponseRecorder {
-	rr := httptest.NewRecorder()
-	a.Router.ServeHTTP(rr, req)
+	if resp.StatusCode != 200 {
+		t.Fatalf("Expected status code 200, got %v", resp.StatusCode)
+	}
 
-	return rr
+	val, ok := resp.Header["Content-Type"]
+	fmt.Println(val)
+	// Assert that the "content-type" header is actually set
+	if !ok {
+		t.Fatalf("Expected Content-Type header to be set")
+	}
+
+	// Assert that it was set as expected
+	if val[0] != "application/json; charset=utf-8" {
+		t.Fatalf("Expected \"application/json; charset=utf-8\", got %s", val[0])
+	}
 }

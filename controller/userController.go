@@ -3,9 +3,39 @@ package controller
 import (
 	"net/http"
 
-	"../structs"
 	"github.com/gin-gonic/gin"
+	"github.com/yasir16/simpleAPI/structs"
 )
+
+// type userController struct {
+// 	userService services.UserInterface
+// }
+// type UserControllerInterface struct{
+// 	ListUser(c *gin.Context)
+// }
+
+// func (idb *userController) ListUser(c *gin.Context) {
+// 	var (
+// 		users  []*structs.User
+// 		result gin.H
+// 	)
+
+// 	users = idb.userService.GetUsers(c)
+// 	if len(users) <= 0 {
+// 		result = gin.H{
+// 			"result": nil,
+// 			"count":  0,
+// 		}
+// 	} else {
+// 		result = gin.H{
+// 			"result": users,
+// 			"count":  len(users),
+// 		}
+// 	}
+
+// 	c.JSON(http.StatusOK, result)
+
+// }
 
 func (idb *InDB) GetUsers(c *gin.Context) {
 	var (

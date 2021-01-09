@@ -4,14 +4,17 @@ import (
 	"fmt"
 	"net/http"
 
-	"./config"
-	"./controller"
+	"github.com/yasir16/simpleAPI/config"
+	"github.com/yasir16/simpleAPI/controller"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
+	setupServer().Run()
+}
+func setupServer() *gin.Engine {
 	db := config.DBInit()
 	inDB := &controller.InDB{DB: db}
 
@@ -22,9 +25,9 @@ func main() {
 	router.PUT("/user/:id", auth, inDB.UpdateUser)
 	router.DELETE("/user/:id", auth, inDB.DeleteUser)
 	router.POST("/user", auth, inDB.CreateUser)
-	router.Run(":3000")
+	// router.Run(":3000")
+	return router
 }
-
 func auth(c *gin.Context) {
 	token := c.Request.Header.Get("Authorization")
 

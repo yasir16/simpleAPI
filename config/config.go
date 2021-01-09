@@ -1,8 +1,8 @@
 package config
 
 import (
-	"../structs"
 	"github.com/jinzhu/gorm"
+	"github.com/yasir16/simpleAPI/structs"
 )
 
 // DBInit create connection to database
