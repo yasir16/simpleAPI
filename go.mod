@@ -1,4 +1,4 @@
-module github.com/yasir116/simpleAPI
+module github.com/yasir16/simpleAPI
 
 go 1.15
 
